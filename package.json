@@ -1,0 +1,19 @@
+{
+  "name": "auto-update-server",
+  "description": "Auto updates everywhere",
+  "tags": [],
+  "version": "0.0.1",
+  "dependencies": {
+    "co": "~2.2.0",
+    "dive": "~0.3.0",
+    "express": "~3.0.0",
+    "semver": "1.1.2",
+    "gnode": "0.0.3",
+    "thunkify": "0.0.1",
+    "co-wait": "0.0.0",
+    "ms": "~0.6.1"
+  },
+  "bin": {
+    "auto-update-server": "./auto-update-server"
+  }
+}

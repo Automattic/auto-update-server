@@ -1,6 +1,6 @@
 # The Server for [Auto Update](https://github.com/cloudup/auto-update)
 
-[](https://i.cloudup.com/l2EgVGwFvB.jpg)
+![](https://i.cloudup.com/l2EgVGwFvB.jpg)
 
 This repository contains the server used to deliver updates to apps using [cloudup/auto-update](https://github.com/cloudup/auto-update). It's written in JavaScript, using node.js, and exposes a very simple HTTP API.
 

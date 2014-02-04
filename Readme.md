@@ -121,7 +121,7 @@ Updates are specified via `.json` files, with the following overall format:
       "architectures": ["x86"],
       "osversion": " >= 5.1 ",
       "appversion": "*",
-      "path": "MyApp-1.5.0-300-windows.zip"
+      "path": "MyApp-1.5.0-300-windows.zip",
       "format": "zip"
     }
   ]

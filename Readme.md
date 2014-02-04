@@ -64,34 +64,6 @@ Resulting route:
 
     /update?app=MyApp&appversion=5.1.0&os=osx&channel=beta
 
-#### Parameter Reference Sheet
-
-##### CPU Architectures
-
-* `x86` - Intel x86
-* `x86-64` - AMD 64
-* `armv6` - ARMv6
-* `armv7` - ARMv7
-
-##### Operating System Versions
-
-Windows:
-
-* `5.1` - Windows XP
-* `5.2` - Windows XP (64-bit)
-* `6.0` - Windows Vista
-* `6.1` - Windows 7
-* `6.2` - Windows 8
-* `6.3` - Windows 8.1
-
-OS X:
-
-* `10.5` Leopard
-* `10.6` Snow Leopard
-* `10.7` Lion
-* `10.8` Mountain Lion
-* `10.9` Mavericks
-
 ### The `/update.json` route
 
 Just like the `/update` route, but returns information about the update in JSON format in the HTTP response body, instead of the update itself.
@@ -198,6 +170,62 @@ File and directory names are not required to follow any particular structure, so
       windows.zip
 ```
 
+### Channels
+
+Users can subscribe to different update channels. You can have as many update channels as you want, and an update can belong to multiple update channels. The default update channel is `'release'`.
+
+Here's a possible update channel setup:
+
+* `'release'` channel — Where all production users are.
+* `'beta'` channel — Used for QA and testing purposes. You can have enthusiast users, or employees of your company on this channel to test the app before it's released to the general public.
+* `'dev'` — Used for continuous integration / dog feeding. You can set up a github hook so that on every push your app is built and uploaded to the update server, and delivered to the machines of all devs within a very short interval.
+
+You can also make your update channels match individual branches on Github. This allows for feature channels.
+
+### Percentage Update Releases
+
+Auto-update-server supports releasing updates for a limited percentage of your user base. This allows for a gradual, controlled release process that can be stopped at any time in case of an urgent issue with the update. (e.g. crash or data corruption)
+
+This is similar to the [staged rollouts](https://support.google.com/googleplay/android-developer/answer/3131213?hl=en) feature of Google Play on Android.
+
+To specify a percentage for your release, use the `"percentage"` option in each entry in your `.json` file:
+
+```json
+{
+  "app": "MyApp",
+  "version": "1.5.0-300",
+  "channels": ["release"],
+  "entries": [
+    {
+      "os": "osx",
+      "architectures": ["x86-64"],
+      "osversion": " >= 10.6 ",
+      "appversion": "*",
+      "path": "MyApp-1.5.0-300-osx.tar.gz",
+      "percentage": 25,
+      "format": "gz"
+    },
+    {
+      "os": "windows",
+      "architectures": ["x86"],
+      "osversion": " >= 5.1 ",
+      "appversion": "*",
+      "path": "MyApp-1.5.0-300-windows.zip",
+      "percentage": 25,
+      "format": "zip"
+    }
+  ]
+}
+```
+
+The following is a possible/suggested release procedure, using percentage updates:
+
+* Continuously test the app on `'dev'` channel as you work on it, to find bugs early on.
+* When the time comes to make a release, upload a version of the app in `'beta'` channel, and have your beta testers do QA tests on it. Repeat this as you find and fix bugs.
+* When you're confident that the version in `'beta'` is good to go, add it to `'release'` channel, with a limited percentage. (e.g. 1%, 5% or 10%, depending on your user base size)
+* Wait until the initial batch of users has updated. In the unlikely scenario that there's an issue with the release, it will only affect a small percentage of your users, not your entire userbase.
+* If no issues are reported, slowly increase the percentage until all your users have updated.
+
 ## Contributors
 
 * [@TooTallNate](https://github.com/TooTallNate)
@@ -227,3 +255,31 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+## Reference Sheet
+
+### CPU Architectures
+
+* `x86` - Intel x86
+* `x86-64` - AMD 64
+* `armv6` - ARMv6
+* `armv7` - ARMv7
+
+### Operating System Versions
+
+Windows:
+
+* `5.1` - Windows XP
+* `5.2` - Windows XP (64-bit)
+* `6.0` - Windows Vista
+* `6.1` - Windows 7
+* `6.2` - Windows 8
+* `6.3` - Windows 8.1
+
+OS X:
+
+* `10.5` Leopard
+* `10.6` Snow Leopard
+* `10.7` Lion
+* `10.8` Mountain Lion
+* `10.9` Mavericks

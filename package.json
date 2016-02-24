@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "auto-update-server",
   "description": "Auto updates everywhere",
   "tags": [],

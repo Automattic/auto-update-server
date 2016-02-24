@@ -4,6 +4,10 @@
   "description": "Auto updates everywhere",
   "tags": [],
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Automattic/auto-update-server"
+  },
   "dependencies": {
     "co": "~2.2.0",
     "dive": "~0.3.0",

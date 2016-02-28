@@ -233,6 +233,21 @@ function defaults(info) {
 }
 
 /**
+ * @deprecated
+ */
+
+app.get('/update/:architecture/:os/:osversion/:app/:appversion/:channel', function(req, res, next) {
+  var info = defaults(req.params);
+  var update = matchUpdate(info);
+  res.setHeader("Connection", "close");
+  if (update) {
+    res.download(update.path, path.basename(update.path));
+  } else {
+    res.send(404, "No updates.");
+  }
+});
+
+/**
  * Check and download update.
  *
  * @api public

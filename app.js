@@ -1,6 +1,9 @@
+#!/usr/bin/env node
 /**
  * Module dependencies
  */
+
+require('gnode');   // Run node with ES6 Generators, today!
 
 var co = require('co');
 var fs = require('fs');
@@ -18,8 +21,11 @@ var exec = require('child_process').exec;
 /**
  * Config
  */
-
-var config = require('./config');
+var config = {
+  username: process.env.USERNAME,
+  password: process.env.PASSWORD,
+  directory: path.join(__dirname, 'updates')
+}
 
 var app = express();
 var updates = [];
@@ -203,34 +209,40 @@ var auth = express.basicAuth(config.username, config.password);
  * @api private
  */
 
-function defaults(info) {
-  if (!info) info = {};
-  if (!info.percentile) info.percentile = 100;
-  if (!info.channel) info.channel = 'release';
-  if (!info.appversion) info.appversion = '0.0.0';
-  if (!info.osversion) {
-    if (info.os == 'windows') {
-      info.osversion = '5.1';
-    } else if (info.os == 'osx') {
-      info.osversion = '10.6';
-    }
-  }
-  if (!info.architecture) {
-    if (info.os == 'windows') {
-      info.architecture = 'x86';
-    } else if (info.os == 'osx') {
-      info.architecture = 'x86-64';
-    }
-  }
-  if (!info.format) {
-    if (info.os == 'windows') {
-      info.format = 'zip';
-    } else if (info.os == 'osx') {
-      info.format = 'gz';
-    }
-  }
-  return info;
-}
+ function defaults(info) {
+   if (!info) info = {};
+   if (!info.percentile) info.percentile = 100;
+   if (!info.channel) info.channel = 'release';
+   if (!info.appversion) info.appversion = '0.0.0';
+   if (!info.osversion) {
+     if (info.os == 'windows') {
+       info.osversion = '5.1';
+     } else if (info.os == 'osx') {
+       info.osversion = '10.6';
+     } else if (info.os == 'linux') {
+       info.osversion = '8.0';
+     }
+   }
+   if (!info.architecture) {
+     if (info.os == 'windows') {
+       info.architecture = 'x86';
+     } else if (info.os == 'osx') {
+       info.architecture = 'x86-64';
+     } else if (info.os == 'linux') {
+       info.architecture = 'armv7';
+     }
+   }
+   if (!info.format) {
+     if (info.os == 'windows') {
+       info.format = 'zip';
+     } else if (info.os == 'osx') {
+       info.format = 'gz';
+     } else if (info.os == 'linux') {
+       info.format = 'bz2';
+     }
+   }
+   return info;
+ }
 
 /**
  * @deprecated

@@ -1,12 +1,11 @@
 {
-  "private": true,
   "name": "auto-update-server",
-  "description": "Auto updates everywhere",
+  "description": "Auto update server",
   "tags": [],
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Automattic/auto-update-server"
+    "url": "git://github.com/ingeniadevteam/auto-update-server"
   },
   "dependencies": {
     "co": "~2.2.0",
@@ -17,8 +16,5 @@
     "ms": "0.7.1",
     "semver": "1.1.2",
     "thunkify": "0.0.1"
-  },
-  "bin": {
-    "auto-update-server": "./auto-update-server"
   }
 }

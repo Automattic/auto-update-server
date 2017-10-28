@@ -33,7 +33,6 @@ var updates = [];
 /**
  * Completes a version with missing info. e.g. '1.3' => '1.3.0'
  */
-
 function completeVer(ver) {
   if (ver.match(/^[0-9]+$/)) {
     return ver + '.0.0';
@@ -47,7 +46,6 @@ function completeVer(ver) {
 /**
  * Removes the Byte Order Mark
  */
-
 function removeBOM(str) {
   if (str.charCodeAt(0) === 0xFEFF) {
     return str.slice(1);
@@ -58,7 +56,6 @@ function removeBOM(str) {
 /**
  * Thunkified dive() module.
  */
-
 function dive (dir, iterator) {
   return function(fn){
     dive_(dir, {}, function(err, filepath){
@@ -71,7 +68,6 @@ function dive (dir, iterator) {
 /**
  * Reads and loads update data from the `updates` directory
  */
-
 function* loadUpdates() {
   console.log('Loading updates...');
 
@@ -131,7 +127,6 @@ function* loadUpdates() {
 /**
  * Cleans up updates in disposable channels after ~24 hours
  */
-
 function* cleanup() {
   if (!config.disposableChannels || config.disposableChannels.length == 0) {
     return;
@@ -169,11 +164,21 @@ function* cleanup() {
 /**
  * Match the latest update for the given info
  */
-
 function matchUpdate(info) {
   var match;
   // TODO: use component/find here...
   updates.forEach(function(update) {
+
+    // console.log("update.app == info.app", update.app == info.app);
+    // console.log("semver.gt(update.version, completeVer(info.appversion))", semver.gt(update.version, completeVer(info.appversion)));
+    // console.log("update.channels.indexOf(info.channel) != -1", update.channels.indexOf(info.channel) != -1);
+    // console.log("update.compatible.architectures.indexOf(info.architecture) != -1", update.compatible.architectures.indexOf(info.architecture) != -1);
+    // console.log("update.compatible.os == info.os", update.compatible.os == info.os);
+    // console.log("semver.satisfies(completeVer(info.osversion), update.compatible.osversion)", semver.satisfies(completeVer(info.osversion), update.compatible.osversion));
+    // console.log("semver.satisfies(completeVer(info.appversion), update.compatible.appversion)", semver.satisfies(completeVer(info.appversion), update.compatible.appversion));
+    // console.log("update.percentage >= parseFloat(info.percentile)", update.percentage >= parseFloat(info.percentile));
+    // console.log("update.format == info.format", update.format == info.format);
+
     if (update.app == info.app &&
         semver.gt(update.version, completeVer(info.appversion)) &&
         update.channels.indexOf(info.channel) != -1 &&
@@ -198,7 +203,6 @@ function matchUpdate(info) {
 /**
  * Middleware
  */
-
 app.use(express.bodyParser());
 
 var auth = express.basicAuth(config.username, config.password);
@@ -208,7 +212,6 @@ var auth = express.basicAuth(config.username, config.password);
  *
  * @api private
  */
-
  function defaults(info) {
    if (!info) info = {};
    if (!info.percentile) info.percentile = 100;
@@ -245,26 +248,10 @@ var auth = express.basicAuth(config.username, config.password);
  }
 
 /**
- * @deprecated
- */
-
-app.get('/update/:architecture/:os/:osversion/:app/:appversion/:channel', function(req, res, next) {
-  var info = defaults(req.params);
-  var update = matchUpdate(info);
-  res.setHeader("Connection", "close");
-  if (update) {
-    res.download(update.path, path.basename(update.path));
-  } else {
-    res.send(404, "No updates.");
-  }
-});
-
-/**
  * Check and download update.
  *
  * @api public
  */
-
 app.get('/update', function(req, res, next) {
   var info = defaults(req.query);
   var update = matchUpdate(info);
@@ -279,7 +266,6 @@ app.get('/update', function(req, res, next) {
 /**
  * Returns a JSON document describing the "latest" version.
  */
-
 app.get('/update.json', function(req, res, next) {
   var info = defaults(req.query);
   var update = matchUpdate(info);
@@ -296,7 +282,6 @@ app.get('/update.json', function(req, res, next) {
 /**
  * Upload new updates
  */
-
 app.post('/upload', auth, function(req, res, next) {
   var tarpath = req.files.update.path;
   console.log('New update received. Extracting contents...');
@@ -314,7 +299,6 @@ app.post('/upload', auth, function(req, res, next) {
 /**
  * Reload
  */
-
 app.post('/reload', auth, function(req, res, next) {
   res.send(202);
   co(loadUpdates)();
@@ -323,7 +307,6 @@ app.post('/reload', auth, function(req, res, next) {
 /**
  * Used for monitoring
  */
-
 app.get('/', function(req, res, next) {
   res.send(200);
 });
@@ -331,7 +314,6 @@ app.get('/', function(req, res, next) {
 /**
  * Static route to get updates
  */
-
 app.use('/static', express.directory(config.directory, { icons: true }));
 app.use('/static', express.static(config.directory));
 
@@ -339,7 +321,6 @@ app.use('/static', express.static(config.directory));
  * Loads the .json update data in a never ending generator loop.
  * This is kinda like setInterval() :D
  */
-
 function* loadUpdatesLoop() {
   while (true) {
     yield loadUpdates();
@@ -351,7 +332,6 @@ function* loadUpdatesLoop() {
 /**
  * Initialize
  */
-
 co(function*(){
   // set process' title
   process.title = 'auto-update-server';

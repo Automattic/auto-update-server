@@ -7,4 +7,3 @@ then
 fi
 
 scp app.js package.json ubuntu@$1:/home/ubuntu/auto-update-server
-scp updates/*.json ubuntu@$1:/home/ubuntu/auto-update-server/updates

@@ -15,7 +15,7 @@
     "express": "~3.0.0",
     "gnode": "0.1.2",
     "ms": "0.7.1",
-    "semver": "1.1.2",
+    "semver": "5.x",
     "thunkify": "0.0.1"
   },
   "bin": {

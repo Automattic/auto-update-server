@@ -175,32 +175,47 @@ function matchUpdate(info) {
   // TODO: use component/find here...
   updates.forEach(function(update) {
 
-    // console.log("update.app == info.app", update.app == info.app);
-    // console.log("semver.gt(update.version, completeVer(info.appversion))", semver.gt(update.version, completeVer(info.appversion)));
-    // console.log("update.channels.indexOf(info.channel) != -1", update.channels.indexOf(info.channel) != -1);
-    // console.log("update.compatible.architectures.indexOf(info.architecture) != -1", update.compatible.architectures.indexOf(info.architecture) != -1);
-    // console.log("update.compatible.os == info.os", update.compatible.os == info.os);
-    // console.log("semver.satisfies(completeVer(info.osversion), update.compatible.osversion)", semver.satisfies(completeVer(info.osversion), update.compatible.osversion));
-    // console.log("semver.satisfies(completeVer(info.appversion), update.compatible.appversion)", semver.satisfies(completeVer(info.appversion), update.compatible.appversion));
-    // console.log("update.percentage >= parseFloat(info.percentile)", update.percentage >= parseFloat(info.percentile));
-    // console.log("update.format == info.format", update.format == info.format);
+    console.log();
+    console.log("update.app == info.app", update.app == info.app);
+    console.log("semver.gt(update.version, completeVer(info.appversion))", semver.gt(update.version, completeVer(info.appversion)));
+    console.log("update.channels.indexOf(info.channel) != -1", update.channels.indexOf(info.channel) != -1);
+    console.log("update.compatible.architectures.indexOf(info.architecture) != -1", update.compatible.architectures.indexOf(info.architecture) != -1);
+    console.log("update.compatible.os == info.os", update.compatible.os == info.os);
+    console.log("semver.satisfies(completeVer(info.osversion), update.compatible.osversion)", semver.satisfies(completeVer(info.osversion), update.compatible.osversion));
+    console.log("semver.satisfies(completeVer(info.appversion), update.compatible.appversion)", semver.satisfies(completeVer(info.appversion), update.compatible.appversion));
+    console.log("update.percentage >= parseFloat(info.percentile)", update.percentage >= parseFloat(info.percentile));
+    console.log("update.format == info.format", update.format == info.format);
 
-    if (update.app == info.app &&
-        semver.gt(update.version, completeVer(info.appversion)) &&
-        update.channels.indexOf(info.channel) != -1 &&
-        update.compatible.architectures.indexOf(info.architecture) != -1 &&
-        update.compatible.os == info.os &&
-        semver.satisfies(completeVer(info.osversion), update.compatible.osversion) &&
-        semver.satisfies(completeVer(info.appversion), update.compatible.appversion) &&
-        update.percentage >= parseFloat(info.percentile) &&
-        update.format == info.format) {
-      if (match) {
-        if (semver.gt(update.version, match.version)) {
+    console.log("match",
+            update.app == info.app
+         && semver.gt(update.version, completeVer(info.appversion))
+         && update.channels.indexOf(info.channel) != -1
+         && update.compatible.architectures.indexOf(info.architecture) != -1
+         && update.compatible.os == info.os
+         && semver.satisfies(completeVer(info.osversion), update.compatible.osversion)
+         && semver.satisfies(completeVer(info.appversion), update.compatible.appversion)
+         && update.percentage >= parseFloat(info.percentile)
+         && update.format == info.format
+    );
+
+    if (
+          update.app == info.app
+       && semver.gt(update.version, completeVer(info.appversion))
+       && update.channels.indexOf(info.channel) != -1
+       && update.compatible.architectures.indexOf(info.architecture) != -1
+       && update.compatible.os == info.os
+       && semver.satisfies(completeVer(info.osversion), update.compatible.osversion)
+       && semver.satisfies(completeVer(info.appversion), update.compatible.appversion)
+       && update.percentage >= parseFloat(info.percentile)
+       && update.format == info.format
+      ) {
+        if (match) {
+          if (semver.gt(update.version, match.version)) {
+            match = update;
+          }
+        } else {
           match = update;
         }
-      } else {
-        match = update;
-      }
     }
   });
   return match;
@@ -218,8 +233,8 @@ function matchUpdate(info) {
 //  var jsonParser = bodyParser.json()
 
 app.use(fileUpload({
-  useTempFiles : true,
-  tempFileDir : '/tmp/'
+  // useTempFiles : true,
+  // tempFileDir : '/tmp/'
 }));
 
 
@@ -285,12 +300,18 @@ const auth = basicAuth({
  */
 app.get('/update', function(req, res, next) {
   var info = defaults(req.query);
+
+  console.log(">>> info", info);
+
   var update = matchUpdate(info);
+
+  // console.log(">>> update", update);
+
   res.setHeader("Connection", "close");
   if (update) {
     res.download(update.path, path.basename(update.path));
   } else {
-    res.send(404, "No updates.");
+    res.status(404).send("No updates");
   }
 });
 
@@ -303,7 +324,7 @@ app.get('/update.json', function(req, res, next) {
   res.setHeader("Connection", "close");
   if (!update) {
     update = {
-      error: 'No updates.'
+      error: 'No updates'
     };
     res.status(404);
   }
@@ -314,17 +335,26 @@ app.get('/update.json', function(req, res, next) {
  * Upload new updates
  */
 app.post('/upload', auth,function(req, res, next) {
-  var tarpath = req.files.update.tempFilePath;
+  if (Object.keys(req.files).length == 0) {
+    return res.status(400).send('No files were uploaded.');
+  }
 
-  console.log('New update received. Extracting contents...');
-  exec('tar -xf ' + tarpath + ' -C "' + config.directory + '"', {}, function(err, stdout, stderr) {
-    if (err) {
-      console.log('Extraction failed.');
-      return next(err);
-    }
-    console.log('Extraction completed.');
-    res.send(201, 'Created');
-    co(loadUpdates)();
+  let update = req.files.update;
+
+  update.mv(`/dev/shm/${req.files.update.name}`, function(err) {
+    if (err)
+      return res.status(500).send(err);
+
+    console.log('New update received. Extracting contents...');
+    exec('tar -xf ' + `/dev/shm/${req.files.update.name}` + ' -C "' + config.directory + '"', {}, function(err, stdout, stderr) {
+      if (err) {
+        console.log('Extraction failed.');
+        return next(err);
+      }
+      console.log('Extraction completed.');
+      co(loadUpdates)();
+      return res.status(201).send("Created")
+    });
   });
 });
 

@@ -243,13 +243,15 @@ var users = {};
 users[`${config.username}`] = config.password;
 
 function getUnauthorizedResponse(req) {
-    return req.auth
-        ? ('Credentials ' + req.auth.user + ':' + req.auth.password + ' rejected')
-        : 'No credentials provided'
+    // return req.auth
+    //     ? ('Credentials ' + req.auth.user + ':' + req.auth.password + ' rejected')
+    //     : 'No credentials provided'
+    return 'auth failed'
 }
 
 const auth = basicAuth({
   users,
+  challenge: true,
   unauthorizedResponse: getUnauthorizedResponse
 });
 
@@ -300,13 +302,7 @@ const auth = basicAuth({
  */
 app.get('/update', function(req, res, next) {
   var info = defaults(req.query);
-
-  console.log(">>> info", info);
-
   var update = matchUpdate(info);
-
-  // console.log(">>> update", update);
-
   res.setHeader("Connection", "close");
   if (update) {
     res.download(update.path, path.basename(update.path));
@@ -334,7 +330,7 @@ app.get('/update.json', function(req, res, next) {
 /**
  * Upload new updates
  */
-app.post('/upload', auth,function(req, res, next) {
+app.post('/upload', auth, function(req, res, next) {
   if (Object.keys(req.files).length == 0) {
     return res.status(400).send('No files were uploaded.');
   }

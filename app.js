@@ -175,28 +175,28 @@ function matchUpdate(info) {
   // TODO: use component/find here...
   updates.forEach(function(update) {
 
-    console.log();
-    console.log("update.app == info.app", update.app == info.app);
-    console.log("semver.gt(update.version, completeVer(info.appversion))", semver.gt(update.version, completeVer(info.appversion)));
-    console.log("update.channels.indexOf(info.channel) != -1", update.channels.indexOf(info.channel) != -1);
-    console.log("update.compatible.architectures.indexOf(info.architecture) != -1", update.compatible.architectures.indexOf(info.architecture) != -1);
-    console.log("update.compatible.os == info.os", update.compatible.os == info.os);
-    console.log("semver.satisfies(completeVer(info.osversion), update.compatible.osversion)", semver.satisfies(completeVer(info.osversion), update.compatible.osversion));
-    console.log("semver.satisfies(completeVer(info.appversion), update.compatible.appversion)", semver.satisfies(completeVer(info.appversion), update.compatible.appversion));
-    console.log("update.percentage >= parseFloat(info.percentile)", update.percentage >= parseFloat(info.percentile));
-    console.log("update.format == info.format", update.format == info.format);
-
-    console.log("match",
-            update.app == info.app
-         && semver.gt(update.version, completeVer(info.appversion))
-         && update.channels.indexOf(info.channel) != -1
-         && update.compatible.architectures.indexOf(info.architecture) != -1
-         && update.compatible.os == info.os
-         && semver.satisfies(completeVer(info.osversion), update.compatible.osversion)
-         && semver.satisfies(completeVer(info.appversion), update.compatible.appversion)
-         && update.percentage >= parseFloat(info.percentile)
-         && update.format == info.format
-    );
+    // console.log();
+    // console.log("update.app == info.app", update.app == info.app);
+    // console.log("semver.gt(update.version, completeVer(info.appversion))", semver.gt(update.version, completeVer(info.appversion)));
+    // console.log("update.channels.indexOf(info.channel) != -1", update.channels.indexOf(info.channel) != -1);
+    // console.log("update.compatible.architectures.indexOf(info.architecture) != -1", update.compatible.architectures.indexOf(info.architecture) != -1);
+    // console.log("update.compatible.os == info.os", update.compatible.os == info.os);
+    // console.log("semver.satisfies(completeVer(info.osversion), update.compatible.osversion)", semver.satisfies(completeVer(info.osversion), update.compatible.osversion));
+    // console.log("semver.satisfies(completeVer(info.appversion), update.compatible.appversion)", semver.satisfies(completeVer(info.appversion), update.compatible.appversion));
+    // console.log("update.percentage >= parseFloat(info.percentile)", update.percentage >= parseFloat(info.percentile));
+    // console.log("update.format == info.format", update.format == info.format);
+    //
+    // console.log("match",
+    //         update.app == info.app
+    //      && semver.gt(update.version, completeVer(info.appversion))
+    //      && update.channels.indexOf(info.channel) != -1
+    //      && update.compatible.architectures.indexOf(info.architecture) != -1
+    //      && update.compatible.os == info.os
+    //      && semver.satisfies(completeVer(info.osversion), update.compatible.osversion)
+    //      && semver.satisfies(completeVer(info.appversion), update.compatible.appversion)
+    //      && update.percentage >= parseFloat(info.percentile)
+    //      && update.format == info.format
+    // );
 
     if (
           update.app == info.app
@@ -221,22 +221,19 @@ function matchUpdate(info) {
   return match;
 }
 
-// /**
-//  * Middleware
-//  */
-//  // parse application/x-www-form-urlencoded
- app.use(bodyParser.urlencoded({ extended: false }));
-//  var urlencodedParser = bodyParser.urlencoded({ extended: false })
+/**
+ * Middleware
+ */
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
- app.use(bodyParser.json());
-//  var jsonParser = bodyParser.json()
+app.use(bodyParser.json());
 
 app.use(fileUpload({
   // useTempFiles : true,
   // tempFileDir : '/tmp/'
 }));
-
 
 // Basic Auth
 var users = {};

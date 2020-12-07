@@ -2,6 +2,8 @@
  * Module dependencies
  */
 
+var basicAuth = require('express-basic-auth');
+var bodyParser = require('body-parser');
 var co = require('co');
 var fs = require('fs');
 var ms = require('ms');
@@ -14,6 +16,7 @@ var semver = require('semver');
 var express = require('express');
 var thunkify = require('thunkify');
 var exec = require('child_process').exec;
+var serveIndex = require('serve-index');
 
 /**
  * Config
@@ -193,9 +196,9 @@ function matchUpdate(info) {
  * Middleware
  */
 
-app.use(express.bodyParser());
+app.use(bodyParser());
 
-var auth = express.basicAuth(config.username, config.password);
+var auth = basicAuth(config.username, config.password);
 
 /**
  * Normalizes a `req.params` or `req.query` object with the proper default values.
@@ -260,7 +263,7 @@ app.get('/update', function(req, res, next) {
   if (update) {
     res.download(update.path, path.basename(update.path));
   } else {
-    res.send(404, "No updates.");
+    res.status(404).send("No updates.");
   }
 });
 
@@ -313,14 +316,14 @@ app.post('/reload', auth, function(req, res, next) {
  */
 
 app.get('/', function(req, res, next) {
-  res.send(200);
+  res.sendStatus(200);
 });
 
 /**
  * Static route to get updates
  */
 
-app.use('/static', express.directory(config.directory, { icons: true }));
+app.use('/static', serveIndex(config.directory, { icons: true }));
 app.use('/static', express.static(config.directory));
 
 /**

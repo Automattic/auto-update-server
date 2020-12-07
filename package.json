@@ -9,13 +9,16 @@
     "url": "git://github.com/Automattic/auto-update-server"
   },
   "dependencies": {
+    "body-parser": "1.19.0",
     "co": "~2.2.0",
     "co-wait": "0.0.0",
     "dive": "~0.3.0",
-    "express": "~3.0.0",
+    "express": "^4.17.1",
+    "express-basic-auth": "1.2.0",
     "gnode": "0.1.2",
     "ms": "0.7.1",
     "semver": "5.x",
+    "serve-index": "1.9.1",
     "thunkify": "0.0.1"
   },
   "bin": {

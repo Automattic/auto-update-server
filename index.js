@@ -27,6 +27,11 @@ var config = require('./config');
 var app = express();
 var updates = [];
 
+var stripBuildNum = function (versionString) {
+  var v = semver.parse(versionString);
+  return v.major + '.' + v.minor + '.' + v.patch;
+};
+
 /**
  * Completes a version with missing info. e.g. '1.3' => '1.3.0'
  */
@@ -168,20 +173,20 @@ function* cleanup() {
  */
 
 function matchUpdate(info) {
-  var match;
+  var match = null;
   // TODO: use component/find here...
   updates.forEach(function(update) {
     if (update.app == info.app &&
-        semver.gt(update.version, completeVer(info.appversion)) &&
+        semver.gt(stripBuildNum(update.version), stripBuildNum(completeVer(info.appversion))) &&
         update.channels.indexOf(info.channel) != -1 &&
         update.compatible.architectures.indexOf(info.architecture) != -1 &&
         update.compatible.os == info.os &&
         semver.satisfies(completeVer(info.osversion), update.compatible.osversion) &&
-        semver.satisfies(completeVer(info.appversion), update.compatible.appversion) &&
+        semver.satisfies(stripBuildNum(completeVer(info.appversion)), update.compatible.appversion) &&
         update.percentage >= parseFloat(info.percentile) &&
         update.format == info.format) {
       if (match) {
-        if (semver.gt(update.version, match.version)) {
+        if (semver.gt(stripBuildNum(update.version), stripBuildNum(match.version))) {
           match = update;
         }
       } else {

@@ -9,7 +9,7 @@
     "url": "git://github.com/Automattic/auto-update-server"
   },
   "dependencies": {
-    "body-parser": "1.19.0",
+    "body-parser": "1.20.3",
     "co": "~2.2.0",
     "co-wait": "0.0.0",
     "dive": "~0.3.0",
